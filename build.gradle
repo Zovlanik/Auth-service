@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.3'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+//java {
+//	toolchain {
+//		languageVersion = JavaLanguageVersion.of(21)
+//	}
+//}
+java {
+    sourceCompatibility = '21'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'io.projectreactor:reactor-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    implementation 'com.example.common:common:1.0.7' //	локальная библиотека с моими общими ДТОшками
+
+    // https://mvnrepository.com/artifact/org.keycloak/keycloak-core
+    implementation 'org.keycloak:keycloak-core:25.0.5'
+	// https://mvnrepository.com/artifact/org.keycloak/keycloak-admin-client
+    implementation 'org.keycloak:keycloak-admin-client:25.0.5'
+	// https://mvnrepository.com/artifact/org.keycloak/keycloak-common
+    implementation 'org.keycloak:keycloak-common:25.0.5'
+
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+

@@ -1,0 +1,12 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: Auth-service
+
+
+
+person_service:
+  url: localhost:8084
+  individualEndpoint: "/api/v1/individual/"
