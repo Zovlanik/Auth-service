@@ -2,6 +2,7 @@ package com.example.Auth_service.controller;
 
 
 import com.example.Auth_service.dto.AuthDto;
+import com.example.Auth_service.dto.RefreshTokenDto;
 import com.example.Auth_service.dto.RegistrationDto;
 import com.example.Auth_service.entity.Individual;
 import com.example.Auth_service.service.AuthService;
@@ -26,9 +27,14 @@ public class AuthController {
         return authService.registration(registrationDto);
     }
 
-    @PostMapping("/getToken")
-    public Mono<String> getToken (@RequestBody AuthDto authDto) {
-        return authService.getToken(authDto);
+    @PostMapping("/authorization")
+    public Mono<RefreshTokenDto> authorization (@RequestBody AuthDto authDto) {
+        return authService.authorization(authDto);
+    }
+
+    @PostMapping("/refresh-token")
+    public Mono<String> refreshToken (@RequestBody String refreshToken) {
+        return authService.refreshToken(refreshToken);
     }
 
     @GetMapping("/{id}")

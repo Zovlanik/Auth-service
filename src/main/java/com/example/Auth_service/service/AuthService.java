@@ -1,8 +1,12 @@
 package com.example.Auth_service.service;
 
 import com.example.Auth_service.dto.AuthDto;
+import com.example.Auth_service.dto.RefreshTokenDto;
 import com.example.Auth_service.dto.RegistrationDto;
 import com.example.Auth_service.entity.Individual;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
@@ -31,6 +35,11 @@ public class AuthService {
     private static final String CLIENT_ID = "person-service";
     private static final String CLIENT_SECRET = "m3ljv2jj5B1mwlN3nq3P9jvD5OInTvFC";
 
+    private final WebClient webClientKeyCloak = WebClient.builder()
+            .baseUrl("http://localhost:8080")
+            .build();
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public Mono<String> registration(RegistrationDto registrationDto) {
 
@@ -73,7 +82,7 @@ public class AuthService {
 
     }
 
-    public Mono<String> getToken(AuthDto authDto) {
+    public Mono<RefreshTokenDto> authorization(AuthDto authDto) {
         Keycloak keycloak = KeycloakBuilder.builder()
                 .serverUrl(SERVER_URL)
                 .realm(REALM)
@@ -86,7 +95,27 @@ public class AuthService {
 
         // Получение токена
         AccessTokenResponse tokenResponse = keycloak.tokenManager().getAccessToken();
-        return Mono.just(tokenResponse.getToken());
+        RefreshTokenDto refreshTokenDto = new RefreshTokenDto();
+        refreshTokenDto.setAccessToken(tokenResponse.getToken());
+        refreshTokenDto.setRefreshToken(tokenResponse.getRefreshToken());
+        return Mono.just(refreshTokenDto);
+    }
+
+    public Mono<String> refreshToken(String refreshToken) {
+
+        Mono<String> stringMono = webClientKeyCloak.post()
+                .uri("/realms/" + REALM + "/protocol/openid-connect/token")
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .bodyValue(
+                        "client_id=" + CLIENT_ID +
+                        "&client_secret=" + CLIENT_SECRET +
+                        "&grant_type=refresh_token" +
+                        "&refresh_token=" + refreshToken
+                )
+                .retrieve()
+                .bodyToMono(String.class);
+
+        return stringMono;
     }
 
 
@@ -138,18 +167,48 @@ public class AuthService {
 */
 
     public Mono<Individual> getIndividual(UUID uuid, String userToken) {
-        if (validateToken(userToken)) {
-            Mono<Individual> individualDtoMono = webClient.get()
-                    .uri("/api/v1/individual/" + uuid)
-                    .retrieve()
-                    .bodyToMono(Individual.class);
-            return individualDtoMono;
-        } else {
-            return Mono.just(null); // todo: сделать тут сообщение о неверном токене
-        }
+        return validateToken(userToken)
+                .flatMap(isValid -> {
+                    if(isValid){
+                        Mono<Individual> individualDtoMono = webClient.get()
+                                .uri("/api/v1/individual/" + uuid)
+                                .retrieve()
+                                .bodyToMono(Individual.class);
+                        return individualDtoMono;
+                    }else {
+                        // Если токен не валиден, возвращаем ошибку
+                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
+                    }
+                });
     }
 
-    public boolean validateToken(String token) {
-        return true;
+    public Mono<Boolean> validateToken(String token) {
+
+        Mono<String> responseMono = webClientKeyCloak.post()
+                .uri("/realms/MyTestService-realm/protocol/openid-connect/token/introspect")
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .bodyValue(
+                        "client_id=" + CLIENT_ID +
+                                "&client_secret=" + CLIENT_SECRET +
+                                "&token=" + token
+                )
+                .retrieve()
+                .bodyToMono(String.class);
+
+        return responseMono.flatMap(response -> {
+            try {
+                JsonNode jsonNode = objectMapper.readTree(response);
+                if (jsonNode.has("active")) {
+                    return Mono.just(jsonNode.get("active").asBoolean());
+                } else {
+                    return Mono.just(false);
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                // В случае ошибки парсинга возвращаем Mono с false
+                return Mono.just(false);
+            }
+        });
+
     }
 }
