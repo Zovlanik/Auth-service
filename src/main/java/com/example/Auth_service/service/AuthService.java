@@ -3,7 +3,6 @@ package com.example.Auth_service.service;
 import com.example.Auth_service.dto.AuthDto;
 import com.example.Auth_service.dto.RefreshTokenDto;
 import com.example.Auth_service.dto.RegistrationDto;
-import com.example.Auth_service.entity.Individual;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,15 +19,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-
-    private final WebClient webClient = WebClient.builder()
-            .baseUrl("http://localhost:8084")
-            .build();
 
     private static final String SERVER_URL = "http://localhost:8080";
     private static final String REALM = "MyTestService-realm";
@@ -166,21 +160,6 @@ public class AuthService {
 
 */
 
-    public Mono<Individual> getIndividual(UUID uuid, String userToken) {
-        return validateToken(userToken)
-                .flatMap(isValid -> {
-                    if(isValid){
-                        Mono<Individual> individualDtoMono = webClient.get()
-                                .uri("/api/v1/individual/" + uuid)
-                                .retrieve()
-                                .bodyToMono(Individual.class);
-                        return individualDtoMono;
-                    }else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
-    }
 
     public Mono<Boolean> validateToken(String token) {
 
