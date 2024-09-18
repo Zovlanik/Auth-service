@@ -1,18 +1,13 @@
 package com.example.Auth_service.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.domain.Persistable;
-import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-@Table("users")
-public class User implements Persistable<UUID> {
-    @Id
+public class User {
+
     private UUID id;
     private String secretKey;
     private LocalDateTime created;
@@ -24,15 +19,4 @@ public class User implements Persistable<UUID> {
     private String status;
     private boolean filled;
     private UUID addressId;
-
-
-    @Override
-    @JsonIgnore
-    public boolean isNew() {
-        return id == null;
-    }
-    @Override
-    public UUID getId() {
-        return id;
-    }
 }
