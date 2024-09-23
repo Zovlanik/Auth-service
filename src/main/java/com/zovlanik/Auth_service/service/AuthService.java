@@ -6,6 +6,7 @@ import com.zovlanik.Auth_service.dto.RegistrationDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
@@ -14,6 +15,7 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -24,16 +26,25 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private static final String SERVER_URL = "http://localhost:8080";
-    private static final String REALM = "MyTestService-realm";
-    private static final String CLIENT_ID = "person-service";
-    private static final String CLIENT_SECRET = "m3ljv2jj5B1mwlN3nq3P9jvD5OInTvFC";
+    @Value("${app.constant.keycloak.server_url}")
+    private String SERVER_URL;
+    @Value("${app.constant.keycloak.realm}")
+    private String REALM;
+    @Value("${app.constant.keycloak.client_id}")
+    private String CLIENT_ID;
+    @Value("${app.constant.keycloak.client_secret}")
+    private String CLIENT_SECRET;
 
-    private final WebClient webClientKeyCloak = WebClient.builder()
-            .baseUrl("http://localhost:8080")
-            .build();
+    private WebClient webClientKeyCloak;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    @PostConstruct
+    public void init() {
+        this.webClientKeyCloak = WebClient.builder()
+                .baseUrl(SERVER_URL)
+                .build();
+    }
 
     public Mono<String> registration(RegistrationDto registrationDto) {
 

@@ -3,7 +3,9 @@ package com.zovlanik.Auth_service.service;
 
 import com.zovlanik.Auth_service.entity.Individual;
 import com.example.common.IndividualDto;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -14,12 +16,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class IndividualsService {
 
+    @Value("${app.constant.person_service.server_url}")
+    private String SERVER_URL;
+
     private final AuthService authService;
 
+    private WebClient webClient;
 
-    private final WebClient webClient = WebClient.builder()
-            .baseUrl("http://localhost:8084")
-            .build();
+    @PostConstruct
+    public void init() {
+        this.webClient = WebClient.builder()
+                .baseUrl(SERVER_URL)
+                .build();
+    }
 
     public Mono<Individual> createIndividual(IndividualDto individualDto, String userToken){
 

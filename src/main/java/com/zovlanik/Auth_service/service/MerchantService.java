@@ -3,7 +3,9 @@ package com.zovlanik.Auth_service.service;
 
 import com.zovlanik.Auth_service.entity.Merchant;
 import com.example.common.MerchantDto;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -14,11 +16,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MerchantService {
 
+    @Value("${app.constant.person_service.server_url}")
+    private String SERVER_URL;
+
     private final AuthService authService;
 
-    private final WebClient webClient = WebClient.builder()
-            .baseUrl("http://localhost:8084")
-            .build();
+    private WebClient webClient;
+
+    @PostConstruct
+    public void init() {
+        this.webClient = WebClient.builder()
+                .baseUrl(SERVER_URL)
+                .build();
+    }
 
     public Mono<Merchant> createMerchant(MerchantDto merchantDto, String userToken) {
         return authService.validateToken(userToken)
