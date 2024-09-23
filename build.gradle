@@ -1,17 +1,12 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.3'
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'org.springframework.boot' version "$springBootVersion"
+    id 'io.spring.dependency-management' version "$springDependencyManagementVersion"
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+group = 'com.zovlanik'
+version = '1.0.0'
 
-//java {
-//	toolchain {
-//		languageVersion = JavaLanguageVersion.of(21)
-//	}
-//}
 java {
     sourceCompatibility = '21'
 }
@@ -30,17 +25,14 @@ dependencies {
     testImplementation 'io.projectreactor:reactor-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    implementation 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    implementation "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
-    implementation 'com.example.common:common:1.0.7' //	локальная библиотека с моими общими ДТОшками
+    implementation "com.example.common:common:$commonVersion" //	локальная библиотека с моими общими ДТОшками
 
-    // https://mvnrepository.com/artifact/org.keycloak/keycloak-core
-    implementation 'org.keycloak:keycloak-core:25.0.5'
-	// https://mvnrepository.com/artifact/org.keycloak/keycloak-admin-client
-    implementation 'org.keycloak:keycloak-admin-client:25.0.5'
-	// https://mvnrepository.com/artifact/org.keycloak/keycloak-common
-    implementation 'org.keycloak:keycloak-common:25.0.5'
+    implementation "org.keycloak:keycloak-core:$keycloakVersion"
+    implementation "org.keycloak:keycloak-admin-client:$keycloakVersion"
+    implementation "org.keycloak:keycloak-common:$keycloakVersion"
 
 
 }
