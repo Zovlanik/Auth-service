@@ -1,8 +1,7 @@
 package com.zovlanik.Auth_service.service;
 
-
-import com.zovlanik.Auth_service.entity.Country;
 import com.example.common.CountryDto;
+import com.zovlanik.Auth_service.entity.Country;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,8 +15,6 @@ public class CountryService {
 
     @Value("${app.constant.person_service.server_url}")
     private String SERVER_URL;
-    private final AuthService authService;
-
     private WebClient webClient;
 
     @PostConstruct
@@ -27,69 +24,33 @@ public class CountryService {
                 .build();
     }
 
-    public Mono<Country> createCountry(CountryDto countryDto, String userToken) {
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if (isValid) {
-                        Mono<Country> countryMono = webClient.post()
-                                .uri("/api/v1/country")
-                                .bodyValue(countryDto)
-                                .retrieve()
-                                .bodyToMono(Country.class);
-                        return countryMono;
-                    } else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<Country> createCountry(CountryDto countryDto) {
+        return webClient.post()
+                .uri("/api/v1/country")
+                .bodyValue(countryDto)
+                .retrieve()
+                .bodyToMono(Country.class);
     }
 
-    public Mono<Country> getCountry(Integer id, String userToken) {
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if (isValid) {
-                        Mono<Country> countryMono = webClient.get()
-                                .uri("/api/v1/country/" + id)
-                                .retrieve()
-                                .bodyToMono(Country.class);
-                        return countryMono;
-                    } else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<Country> getCountry(Integer id) {
+        return webClient.get()
+                .uri("/api/v1/country/" + id)
+                .retrieve()
+                .bodyToMono(Country.class);
     }
 
-    public Mono<Country> updateCountry(Integer id, CountryDto countryDto, String userToken) {
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if (isValid) {
-                        Mono<Country> countryMono = webClient.put()
-                                .uri("/api/v1/country/" + id)
-                                .bodyValue(countryDto)
-                                .retrieve()
-                                .bodyToMono(Country.class);
-                        return countryMono;
-                    } else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<Country> updateCountry(Integer id, CountryDto countryDto) {
+        return webClient.put()
+                .uri("/api/v1/country/" + id)
+                .bodyValue(countryDto)
+                .retrieve()
+                .bodyToMono(Country.class);
     }
 
-    public Mono<Void> deleteCountry(Integer id, String userToken) {
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if (isValid) {
-                        Mono<Void> voidMono = webClient.delete()
-                                .uri("/api/v1/country/" + id)
-                                .retrieve()
-                                .bodyToMono(Void.class);
-                        return voidMono;
-                    } else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<Void> deleteCountry(Integer id) {
+        return webClient.delete()
+                .uri("/api/v1/country/" + id)
+                .retrieve()
+                .bodyToMono(Void.class);
     }
 }

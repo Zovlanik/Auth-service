@@ -1,8 +1,8 @@
 package com.zovlanik.Auth_service.controller;
 
 
+import com.zovlanik.Auth_service.dto.AccessTokenDto;
 import com.zovlanik.Auth_service.dto.AuthDto;
-import com.zovlanik.Auth_service.dto.RefreshTokenDto;
 import com.zovlanik.Auth_service.dto.RegistrationDto;
 import com.zovlanik.Auth_service.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +20,17 @@ public class AuthRestControllerV1 {
     private final AuthService authService;
 
     @PostMapping("/registration")
-    public Mono<String> registration (@RequestBody RegistrationDto registrationDto) {
+    public Mono<AccessTokenDto> registration(@RequestBody RegistrationDto registrationDto) {
         return authService.registration(registrationDto);
     }
 
     @PostMapping("/authorization")
-    public Mono<RefreshTokenDto> authorization (@RequestBody AuthDto authDto) {
+    public Mono<AccessTokenDto> authorization(@RequestBody AuthDto authDto) {
         return authService.authorization(authDto);
     }
 
     @PostMapping("/refresh-token")
-    public Mono<String> refreshToken (@RequestBody String refreshToken) {
+    public Mono<AccessTokenDto> refreshToken(@RequestBody String refreshToken) {
         return authService.refreshToken(refreshToken);
     }
 

@@ -1,8 +1,7 @@
 package com.zovlanik.Auth_service.service;
 
-
-import com.zovlanik.Auth_service.entity.Merchant;
 import com.example.common.MerchantDto;
+import com.zovlanik.Auth_service.entity.Merchant;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +18,6 @@ public class MerchantService {
     @Value("${app.constant.person_service.server_url}")
     private String SERVER_URL;
 
-    private final AuthService authService;
-
     private WebClient webClient;
 
     @PostConstruct
@@ -30,69 +27,33 @@ public class MerchantService {
                 .build();
     }
 
-    public Mono<Merchant> createMerchant(MerchantDto merchantDto, String userToken) {
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if (isValid) {
-                        Mono<Merchant> merchantMono = webClient.post()
-                                .uri("/api/v1/merchant")
-                                .bodyValue(merchantDto)
-                                .retrieve()
-                                .bodyToMono(Merchant.class);
-                        return merchantMono;
-                    } else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<Merchant> createMerchant(MerchantDto merchantDto) {
+        return webClient.post()
+                .uri("/api/v1/merchant")
+                .bodyValue(merchantDto)
+                .retrieve()
+                .bodyToMono(Merchant.class);
     }
 
-    public Mono<Merchant> findById(UUID uuid, String userToken) {
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if (isValid) {
-                        Mono<Merchant> merchantMono = webClient.get()
-                                .uri("/api/v1/merchant/" + uuid)
-                                .retrieve()
-                                .bodyToMono(Merchant.class);
-                        return merchantMono;
-                    } else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<Merchant> findById(UUID uuid) {
+        return webClient.get()
+                .uri("/api/v1/merchant/" + uuid)
+                .retrieve()
+                .bodyToMono(Merchant.class);
     }
 
-    public Mono<Merchant> updateMerchant(UUID id, MerchantDto merchantDto, String userToken) {
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if (isValid) {
-                        Mono<Merchant> merchantMono = webClient.put()
-                                .uri("/api/v1/merchant/" + id)
-                                .bodyValue(merchantDto)
-                                .retrieve()
-                                .bodyToMono(Merchant.class);
-                        return merchantMono;
-                    } else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<Merchant> updateMerchant(UUID id, MerchantDto merchantDto) {
+        return webClient.put()
+                .uri("/api/v1/merchant/" + id)
+                .bodyValue(merchantDto)
+                .retrieve()
+                .bodyToMono(Merchant.class);
     }
 
-    public Mono<Void> deleteById(UUID id, String userToken) {
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if (isValid) {
-                        Mono<Void> voidMono = webClient.delete()
-                                .uri("/api/v1/merchant/" + id)
-                                .retrieve()
-                                .bodyToMono(Void.class);
-                        return voidMono;
-                    } else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<Void> deleteById(UUID id) {
+        return webClient.delete()
+                .uri("/api/v1/merchant/" + id)
+                .retrieve()
+                .bodyToMono(Void.class);
     }
 }

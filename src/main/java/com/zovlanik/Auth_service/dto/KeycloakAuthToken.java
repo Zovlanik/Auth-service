@@ -6,7 +6,13 @@ import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class RefreshTokenDto {
+public class KeycloakAuthToken {
     private String accessToken;
+    private Long expiresIn;
+    private Long refreshExpiresIn;
     private String refreshToken;
+    private String tokenType;
+    private Long notBeforePolicy;
+    private String sessionState;
+    private String scope;
 }

@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: Auth-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/MyTestService-realm
 
 app:
   constant:
@@ -12,5 +17,8 @@ app:
       realm: "MyTestService-realm"
       client_id: "person-service"
       client_secret: "m3ljv2jj5B1mwlN3nq3P9jvD5OInTvFC"
+
+      admin_username: "realmadmin"
+      admin_password: "realmadmin"
     person_service:
       server_url: "http://localhost:8084"

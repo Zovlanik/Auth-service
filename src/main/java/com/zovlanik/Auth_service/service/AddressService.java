@@ -1,9 +1,11 @@
 package com.zovlanik.Auth_service.service;
 
 
-import com.zovlanik.Auth_service.entity.Address;
 import com.example.common.AddressDto;
+import com.zovlanik.Auth_service.entity.Address;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -15,75 +17,45 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AddressService {
 
-    private final AuthService authService;
+    @Value("${app.constant.person_service.server_url}")
+    private String SERVER_URL;
 
-    private final WebClient webClient = WebClient.builder()
-            .baseUrl("http://localhost:8084")
-            .build();
+    private WebClient webClient;
 
-    public Mono<Address> createAddress(AddressDto addressDto, String userToken){
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if(isValid){
-                        Mono<Address>  addressMono = webClient.post()
-                                .uri("/api/v1/address")
-                                .bodyValue(addressDto)
-                                .retrieve()
-                                .bodyToMono(Address.class);
-                        return addressMono;
-                    }else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    @PostConstruct
+    public void init() {
+        this.webClient = WebClient.builder()
+                .baseUrl(SERVER_URL)
+                .build();
     }
 
-    public Mono<Address> getAddress(UUID uuid,String userToken){
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if(isValid){
-                        Mono<Address> addressMono = webClient.get()
-                                .uri("/api/v1/address/" + uuid)
-                                .retrieve()
-                                .bodyToMono(Address.class);
-                        return addressMono;
-                    }else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<Address> createAddress(AddressDto addressDto) {
+        return webClient.post()
+                .uri("/api/v1/address")
+                .bodyValue(addressDto)
+                .retrieve()
+                .bodyToMono(Address.class);
     }
 
-    public Mono<Address> updateAddress(UUID uuid, AddressDto addressDto,String userToken){
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if(isValid){
-                        Mono<Address> addressMono = webClient.put()
-                                .uri("/api/v1/address/" + uuid)
-                                .bodyValue(addressDto)
-                                .retrieve()
-                                .bodyToMono(Address.class);
-                        return addressMono;
-                    }else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<Address> getAddress(UUID uuid) {
+        return webClient.get()
+                .uri("/api/v1/address/" + uuid)
+                .retrieve()
+                .bodyToMono(Address.class);
     }
 
-    public Mono<Void> deleteAddress(UUID uuid,String userToken){
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if(isValid){
-                        Mono<Void> voidMono = webClient.delete()
-                                .uri("/api/v1/individual/" + uuid)
-                                .retrieve()
-                                .bodyToMono(Void.class);
-                        return voidMono;
-                    }else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<Address> updateAddress(UUID uuid, AddressDto addressDto) {
+        return webClient.put()
+                .uri("/api/v1/address/" + uuid)
+                .bodyValue(addressDto)
+                .retrieve()
+                .bodyToMono(Address.class);
+    }
+
+    public Mono<Void> deleteAddress(UUID uuid) {
+        return webClient.delete()
+                .uri("/api/v1/individual/" + uuid)
+                .retrieve()
+                .bodyToMono(Void.class);
     }
 }

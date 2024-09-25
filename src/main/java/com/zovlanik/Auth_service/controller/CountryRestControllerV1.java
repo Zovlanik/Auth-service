@@ -16,26 +16,22 @@ public class CountryRestControllerV1 {
     private final CountryService countryService;
 
     @PostMapping
-    public Mono<Country> createCountry(@RequestBody CountryDto countryDto, @RequestHeader("Authorization") String authHeader) {
-        String userToken = authHeader.replace("Bearer ", "");
-        return countryService.createCountry(countryDto, userToken);
+    public Mono<Country> createCountry(@RequestBody CountryDto countryDto) {
+        return countryService.createCountry(countryDto);
     }
 
     @GetMapping("/{id}")
-    public Mono<Country> getCountry(@PathVariable Integer id, @RequestHeader("Authorization") String authHeader) {
-        String userToken = authHeader.replace("Bearer ", "");
-        return countryService.getCountry(id, userToken);
+    public Mono<Country> getCountry(@PathVariable Integer id) {
+        return countryService.getCountry(id);
     }
 
     @PutMapping("/{id}")
-    public Mono<Country> updateCountry(@PathVariable Integer id, @RequestBody CountryDto countryDto, @RequestHeader("Authorization") String authHeader) {
-        String userToken = authHeader.replace("Bearer ", "");
-        return countryService.updateCountry(id, countryDto, userToken);
+    public Mono<Country> updateCountry(@PathVariable Integer id, @RequestBody CountryDto countryDto) {
+        return countryService.updateCountry(id, countryDto);
     }
 
     @DeleteMapping("/{id}")
-    public Mono<Void> deleteCountry(@PathVariable Integer id, @RequestHeader("Authorization") String authHeader) {
-        String userToken = authHeader.replace("Bearer ", "");
-        return countryService.deleteCountry(id, userToken);
+    public Mono<Void> deleteCountry(@PathVariable Integer id) {
+        return countryService.deleteCountry(id);
     }
 }

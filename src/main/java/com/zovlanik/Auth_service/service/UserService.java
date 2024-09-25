@@ -1,8 +1,7 @@
 package com.zovlanik.Auth_service.service;
 
-
-import com.zovlanik.Auth_service.entity.User;
 import com.example.common.UserDto;
+import com.zovlanik.Auth_service.entity.User;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +16,6 @@ public class UserService {
     @Value("${app.constant.person_service.server_url}")
     private String SERVER_URL;
 
-    private final AuthService authService;
-
     private WebClient webClient;
 
     @PostConstruct
@@ -28,20 +25,11 @@ public class UserService {
                 .build();
     }
 
-    public Mono<User> createUser(UserDto userDto, String userToken) {
-        return authService.validateToken(userToken)
-                .flatMap(isValid -> {
-                    if (isValid) {
-                        Mono<User> userMono = webClient.post()
-                                .uri("/api/v1/user")
-                                .bodyValue(userDto)
-                                .retrieve()
-                                .bodyToMono(User.class);
-                        return userMono;
-                    } else {
-                        // Если токен не валиден, возвращаем ошибку
-                        return Mono.error(new RuntimeException("Invalid token"));// todo: сделать тут сообщение о неверном токене
-                    }
-                });
+    public Mono<User> createUser(UserDto userDto) {
+        return webClient.post()
+                .uri("/api/v1/user")
+                .bodyValue(userDto)
+                .retrieve()
+                .bodyToMono(User.class);
     }
 }
