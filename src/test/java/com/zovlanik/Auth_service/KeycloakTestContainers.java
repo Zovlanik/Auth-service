@@ -21,7 +21,9 @@ public abstract class KeycloakTestContainers {
 
     @DynamicPropertySource
     static void registerResourceServerIssuerProperty(DynamicPropertyRegistry registry) {
-        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/" + REALM);
+        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/MyTestService-realm");
+        registry.add("spring.security.oauth2.client.provider.keycloak.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/MyTestService-realm");
+        registry.add("spring.security.oauth2.client.registration.keycloak.client-secret", () -> "**********");
         registry.add("app.constant.keycloak.server-url", () -> keycloakContainer.getAuthServerUrl());
     }
 }
