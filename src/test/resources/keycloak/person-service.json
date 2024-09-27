@@ -2375,5 +2375,31 @@
   },
   "clientPolicies": {
     "policies": []
-  }
+  },
+  "users": [
+    {
+      "username": "realmadmin",
+      "email": "realmadmin@mail.com",
+      "emailVerified": true,
+      "firstName": "realmadmin",
+      "lastName": "realmadmin",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "realmadmin",
+          "temporary": false
+        }
+      ],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ],
+        "realm-management": [
+          "manage-users"
+        ]
+      }
+    }
+  ]
 }

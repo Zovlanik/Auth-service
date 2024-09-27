@@ -75,7 +75,6 @@ public class KeyCloakClient {
         } else {
             return Mono.just(AccessTokenDto.builder()
                     .accessToken("Failed to create user: " + response.getStatusInfo().toString())
-                    .refreshToken("Failed to create user: " + response.getStatusInfo().toString())
                     .build());
         }
     }

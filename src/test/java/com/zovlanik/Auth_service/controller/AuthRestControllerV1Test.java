@@ -43,7 +43,8 @@ class AuthRestControllerV1Test extends KeycloakTestContainers{
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.access_token").isNotEmpty();
+                .jsonPath("$.access_token").isNotEmpty()
+                .jsonPath("$.refresh_token").isNotEmpty();
         System.out.println("Please, WAIT!");
     }
     @Test
@@ -61,6 +62,7 @@ class AuthRestControllerV1Test extends KeycloakTestContainers{
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.access_token").isNotEmpty();
+                .jsonPath("$.access_token").isNotEmpty()
+                .jsonPath("$.refresh_token").isNotEmpty();
     }
 }

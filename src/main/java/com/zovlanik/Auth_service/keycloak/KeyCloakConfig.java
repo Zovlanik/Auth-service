@@ -18,10 +18,10 @@ public class KeyCloakConfig {
     @Value("${app.constant.keycloak.client_secret}")
     private String CLIENT_SECRET;
 
-    @Value("${app.constant.keycloak.admin_username}")
-    private String ADMIN_USERNAME;
-    @Value("${app.constant.keycloak.admin_password}")
-    private String ADMIN_PASSWORD;
+    @Value("${app.constant.keycloak.realm_admin_username}")
+    private String REALM_ADMIN_USERNAME;
+    @Value("${app.constant.keycloak.realm_admin_password}")
+    private String REALM_ADMIN_PASSWORD;
 
     @Bean
     public Keycloak keycloak() {
@@ -30,10 +30,9 @@ public class KeyCloakConfig {
                 .realm(REALM)
                 .clientId(CLIENT_ID)
                 .clientSecret(CLIENT_SECRET)
-                .username(ADMIN_USERNAME)
-                .password(ADMIN_PASSWORD)
+                .username(REALM_ADMIN_USERNAME)
+                .password(REALM_ADMIN_PASSWORD)
                 .grantType(OAuth2Constants.PASSWORD)
-//                .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                 .build();
     }
 }

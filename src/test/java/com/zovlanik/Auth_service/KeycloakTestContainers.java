@@ -9,8 +9,8 @@ import org.springframework.test.context.DynamicPropertySource;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class KeycloakTestContainers {
 
-    @Value("${app.constant.keycloak.client_secret}")
-    static String CLIENT_SECRET;
+    @Value("${app.constant.keycloak.realm}")
+    static String REALM;
     static final KeycloakContainer keycloakContainer;
 
     static {
@@ -21,8 +21,7 @@ public abstract class KeycloakTestContainers {
 
     @DynamicPropertySource
     static void registerResourceServerIssuerProperty(DynamicPropertyRegistry registry) {
-        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/MyTestService-realm");
+        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/" + REALM);
         registry.add("app.constant.keycloak.server-url", () -> keycloakContainer.getAuthServerUrl());
-        registry.add("app.constant.keycloak.client_secret", () -> CLIENT_SECRET);
     }
 }

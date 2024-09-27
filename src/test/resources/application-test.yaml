@@ -8,4 +8,9 @@ spring:
 app:
   constant:
     keycloak:
+      server-url: "http://localhost:8080"
+      realm: "MyTestService-realm"
+      client_id: "person-service"
       client_secret: "**********"
+      realm_admin_username: "realmadmin" #Именно этот пользователь заведен в resources/keycloak/person-service.json
+      realm_admin_password: "realmadmin" #Именно этот пользователь заведен в resources/keycloak/person-service.json
