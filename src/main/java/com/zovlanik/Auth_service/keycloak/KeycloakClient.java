@@ -3,16 +3,15 @@ package com.zovlanik.Auth_service.keycloak;
 import com.zovlanik.Auth_service.dto.AccessTokenDto;
 import com.zovlanik.Auth_service.dto.KeyCloakUserDto;
 import com.zovlanik.Auth_service.dto.KeycloakAuthToken;
+import com.zovlanik.Auth_service.dto.RefreshToken;
 import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -21,36 +20,22 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
-public class KeyCloakClient {
+public class KeycloakClient {
 
     private final Keycloak keycloak;
-
-    @Value("${app.constant.keycloak.server-url}")
-    private String SERVER_URL;
-    @Value("${app.constant.keycloak.realm}")
-    private String REALM;
-    @Value("${app.constant.keycloak.client_id}")
-    private String CLIENT_ID;
-    @Value("${app.constant.keycloak.client_secret}")
-    private String CLIENT_SECRET;
-
-    @Value("${app.constant.keycloak.admin_username}")
-    private String ADMIN_USERNAME;
-    @Value("${app.constant.keycloak.admin_password}")
-    private String ADMIN_PASSWORD;
+    private final KeycloakConfig keycloakConfig;
 
     private WebClient webClientKeyCloak;
 
     @PostConstruct
     public void init() {
         this.webClientKeyCloak = WebClient.builder()
-                .baseUrl(SERVER_URL)
+                .baseUrl(keycloakConfig.SERVER_URL)
                 .build();
     }
 
     public Mono<AccessTokenDto> registration(KeyCloakUserDto keyCloakUserDto) {
         // регистрируем новых пользователей под админом, которого заранее создали на сервере
-//        RealmResource realmResource = keycloak.realm(REALM);
 
         UserRepresentation userRepresentation = new UserRepresentation();
         userRepresentation.setEmail(keyCloakUserDto.getEmail());
@@ -67,7 +52,7 @@ public class KeyCloakClient {
         userRepresentation.setCredentials(Collections.singletonList(credential));
 
 
-        UsersResource usersResource = keycloak.realm(REALM).users();
+        UsersResource usersResource = keycloak.realm(keycloakConfig.REALM).users();
         Response response = usersResource.create(userRepresentation);
 
         if (response.getStatus() == 201) {
@@ -81,7 +66,7 @@ public class KeyCloakClient {
 
     public Mono<AccessTokenDto> authorization(KeyCloakUserDto keyCloakUserDto) {
         // Получение токена
-        AccessTokenResponse tokenResponse = keycloak.tokenManager().getAccessToken();
+        AccessTokenResponse tokenResponse = keycloakConfig.getKeyCloakForUser(keyCloakUserDto).tokenManager().getAccessToken();
 
         return Mono.just(AccessTokenDto.builder()
                 .accessToken(tokenResponse.getToken())
@@ -89,15 +74,15 @@ public class KeyCloakClient {
                 .build());
     }
 
-    public Mono<AccessTokenDto> refreshToken(String refreshToken) {
+    public Mono<AccessTokenDto> refreshToken(RefreshToken refreshToken) {
         return webClientKeyCloak.post()
-                .uri("/realms/" + REALM + "/protocol/openid-connect/token")
+                .uri("/realms/" + keycloakConfig.REALM + "/protocol/openid-connect/token")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .bodyValue(
-                        "client_id=" + CLIENT_ID +
-                                "&client_secret=" + CLIENT_SECRET +
+                        "client_id=" + keycloakConfig.CLIENT_ID +
+                                "&client_secret=" + keycloakConfig.CLIENT_SECRET +
                                 "&grant_type=refresh_token" +
-                                "&refresh_token=" + refreshToken
+                                "&refresh_token=" + refreshToken.getRefreshToken()
                 )
                 .retrieve()
                 .bodyToMono(KeycloakAuthToken.class)

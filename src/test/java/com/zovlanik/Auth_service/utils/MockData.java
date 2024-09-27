@@ -5,8 +5,13 @@ import com.example.common.IndividualDto;
 import com.example.common.UserDto;
 import com.zovlanik.Auth_service.dto.KeyCloakUserDto;
 import com.zovlanik.Auth_service.dto.RegistrationDto;
+import com.zovlanik.Auth_service.entity.Address;
+import com.zovlanik.Auth_service.entity.Individual;
+import com.zovlanik.Auth_service.entity.User;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class MockData {
     public static RegistrationDto getRegistrationDto(){
@@ -61,5 +66,53 @@ public class MockData {
         individualDto.setStatus("ACTIVE");
         registrationDto.setIndividualDto(individualDto);
         return registrationDto;
+    }
+
+
+    public static Mono<Address> getAddress(){
+        Address address = new Address();
+        address.setId(UUID.randomUUID());
+        address.setCreated(LocalDateTime.parse("2024-03-06T09:22:34.423"));
+        address.setUpdated(LocalDateTime.parse("2024-03-06T09:22:34.423"));
+        address.setCountryId(2);
+        address.setAddress("Address of usertest2");
+        address.setZipCode("223456");
+        address.setCity("City of usertest2");
+        address.setState("State of usertest2");
+        address.setArchived(null);
+        return Mono.just(address);
+    }
+
+    public static Mono<User> getUser(){
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setSecretKey("dont know why");
+        user.setCreated(LocalDateTime.parse("2024-03-06T09:22:34.423"));
+        user.setUpdated(null);
+        user.setFirstName("usertest2_first_name");
+        user.setLastName("usertest2_last_name");
+        user.setVerifiedAt(null);
+        user.setArchivedAt(null);
+        user.setStatus("ACTIVE");
+        user.setFilled(false);
+        user.setAddressId(null);
+
+        return Mono.just(user);
+    }
+
+    public static Mono<Individual> getIndividual(){
+        Individual individual = new Individual();
+        individual.setId(UUID.randomUUID());
+        individual.setUserId(null);
+        individual.setCreated(LocalDateTime.parse("2024-03-06T09:22:34.423"));
+        individual.setUpdated(null);
+        individual.setPassportNumber("22 34 5678");
+        individual.setPhoneNumber("+7 909 223 45 67");
+        individual.setEmail("test2@mail.ru");
+        individual.setVerifiedAt(null);
+        individual.setArchivedAt(null);
+        individual.setStatus("ACTIVE");
+
+        return Mono.just(individual);
     }
 }

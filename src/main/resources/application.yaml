@@ -18,7 +18,7 @@ app:
       client_id: "person-service"
       client_secret: "m3ljv2jj5B1mwlN3nq3P9jvD5OInTvFC"
 
-      admin_username: "realmadmin"
-      admin_password: "realmadmin"
+      realm_admin_username: "realmadmin"
+      realm_admin_password: "realmadmin"
     person_service:
       server-url: "http://localhost:8084"
