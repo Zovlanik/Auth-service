@@ -54,7 +54,7 @@ public class AddressService {
 
     public Mono<Void> deleteAddress(UUID uuid) {
         return webClient.delete()
-                .uri("/api/v1/individual/" + uuid)
+                .uri("/api/v1/address/" + uuid)
                 .retrieve()
                 .bodyToMono(Void.class);
     }

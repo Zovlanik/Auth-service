@@ -68,10 +68,23 @@ public class MockData {
         return registrationDto;
     }
 
+    public static AddressDto getAddressDto(){
+        AddressDto addressDto = new AddressDto();
+        addressDto.setCreated(LocalDateTime.parse("2024-03-06T09:22:34.423"));
+        addressDto.setUpdated(LocalDateTime.parse("2024-03-06T09:22:34.423"));
+        addressDto.setCountryId(2);
+        addressDto.setAddress("Address of usertest2");
+        addressDto.setZipCode("223456");
+        addressDto.setCity("City of usertest2");
+        addressDto.setState("State of usertest2");
+        addressDto.setArchived(null);
+
+        return addressDto;
+    }
 
     public static Mono<Address> getAddress(){
         Address address = new Address();
-        address.setId(UUID.randomUUID());
+        address.setId(UUID.fromString("6a4d6102-f40a-4038-bbbd-cf5a61008bd3"));
         address.setCreated(LocalDateTime.parse("2024-03-06T09:22:34.423"));
         address.setUpdated(LocalDateTime.parse("2024-03-06T09:22:34.423"));
         address.setCountryId(2);
@@ -85,7 +98,7 @@ public class MockData {
 
     public static Mono<User> getUser(){
         User user = new User();
-        user.setId(UUID.randomUUID());
+        user.setId(UUID.fromString("6a4d6102-f40a-4038-bbbd-cf5a61008bd4"));
         user.setSecretKey("dont know why");
         user.setCreated(LocalDateTime.parse("2024-03-06T09:22:34.423"));
         user.setUpdated(null);
@@ -102,7 +115,7 @@ public class MockData {
 
     public static Mono<Individual> getIndividual(){
         Individual individual = new Individual();
-        individual.setId(UUID.randomUUID());
+        individual.setId(UUID.fromString("6a4d6102-f40a-4038-bbbd-cf5a61008bd5"));
         individual.setUserId(null);
         individual.setCreated(LocalDateTime.parse("2024-03-06T09:22:34.423"));
         individual.setUpdated(null);
