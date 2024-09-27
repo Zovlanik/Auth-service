@@ -13,7 +13,7 @@ spring:
 app:
   constant:
     keycloak:
-      server_url: "http://localhost:8080"
+      server-url: "http://localhost:8080"
       realm: "MyTestService-realm"
       client_id: "person-service"
       client_secret: "m3ljv2jj5B1mwlN3nq3P9jvD5OInTvFC"
@@ -21,4 +21,4 @@ app:
       admin_username: "realmadmin"
       admin_password: "realmadmin"
     person_service:
-      server_url: "http://localhost:8084"
+      server-url: "http://localhost:8084"

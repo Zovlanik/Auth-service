@@ -33,6 +33,7 @@ public class AuthService {
                     return individualsService.createIndividual(individualDto);
                 })
                 .flatMap(individual -> keyCloakClient.registration(registrationDto.getKeyCloakUserDto()));
+//        return keyCloakClient.registration(registrationDto.getKeyCloakUserDto());
     }
 
     public Mono<AccessTokenDto> authorization(AuthDto authDto) {

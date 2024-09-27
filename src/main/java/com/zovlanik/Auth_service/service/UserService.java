@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class UserService {
 
-    @Value("${app.constant.person_service.server_url}")
+    @Value("${app.constant.person_service.server-url}")
     private String SERVER_URL;
 
     private WebClient webClient;

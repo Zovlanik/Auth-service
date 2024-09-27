@@ -7,8 +7,8 @@ import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -23,7 +23,9 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class KeyCloakClient {
 
-    @Value("${app.constant.keycloak.server_url}")
+    private final Keycloak keycloak;
+
+    @Value("${app.constant.keycloak.server-url}")
     private String SERVER_URL;
     @Value("${app.constant.keycloak.realm}")
     private String REALM;
@@ -48,17 +50,7 @@ public class KeyCloakClient {
 
     public Mono<AccessTokenDto> registration(KeyCloakUserDto keyCloakUserDto) {
         // регистрируем новых пользователей под админом, которого заранее создали на сервере
-        Keycloak keycloak = KeycloakBuilder.builder()
-                .serverUrl(SERVER_URL)
-                .realm(REALM)
-                .clientId(CLIENT_ID)
-                .clientSecret(CLIENT_SECRET)
-                .username(ADMIN_USERNAME)
-                .password(ADMIN_PASSWORD)
-                .grantType("password")
-                .build();
-
-        RealmResource realmResource = keycloak.realm(REALM);
+//        RealmResource realmResource = keycloak.realm(REALM);
 
         UserRepresentation userRepresentation = new UserRepresentation();
         userRepresentation.setEmail(keyCloakUserDto.getEmail());
@@ -75,7 +67,8 @@ public class KeyCloakClient {
         userRepresentation.setCredentials(Collections.singletonList(credential));
 
 
-        Response response = realmResource.users().create(userRepresentation);
+        UsersResource usersResource = keycloak.realm(REALM).users();
+        Response response = usersResource.create(userRepresentation);
 
         if (response.getStatus() == 201) {
             return authorization(keyCloakUserDto);
@@ -88,16 +81,6 @@ public class KeyCloakClient {
     }
 
     public Mono<AccessTokenDto> authorization(KeyCloakUserDto keyCloakUserDto) {
-        Keycloak keycloak = KeycloakBuilder.builder()
-                .serverUrl(SERVER_URL)
-                .realm(REALM)
-                .clientId(CLIENT_ID)
-                .clientSecret(CLIENT_SECRET)
-                .username(keyCloakUserDto.getUsername())
-                .password(keyCloakUserDto.getPassword())
-                .grantType("password")
-                .build();
-
         // Получение токена
         AccessTokenResponse tokenResponse = keycloak.tokenManager().getAccessToken();
 

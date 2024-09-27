@@ -36,6 +36,15 @@ dependencies {
     implementation "org.keycloak:keycloak-admin-client:$keycloakVersion"
     implementation "org.keycloak:keycloak-common:$keycloakVersion"
 
+
+    // для тестов
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'io.projectreactor:reactor-test'
+//    testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
+    testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
+    testImplementation "com.github.dasniko:testcontainers-keycloak:$testcontainersKeycloak"
+
 }
 
 tasks.named('test') {

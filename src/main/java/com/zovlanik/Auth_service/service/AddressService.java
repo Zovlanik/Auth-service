@@ -17,7 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AddressService {
 
-    @Value("${app.constant.person_service.server_url}")
+    @Value("${app.constant.person_service.server-url}")
     private String SERVER_URL;
 
     private WebClient webClient;
